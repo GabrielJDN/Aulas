@@ -47,6 +47,76 @@ DROP TABLE salarios;
 CREATE INDEX departamentos ON funcionarios (departamento);
 CREATE INDEX nomes ON funcionarios (nome(6));
 
+#Agora irei fazer um novo exercício, portanto limpo tudo relacionado ao exercício anterior!
+DROP TABLE funcionarios;
+DROP TABLE veiculos;
 
+# ========================================== Final da aula 3 Teórica!
+# ========================================== Começo dos exercícios da aula 3!
+# Agora, começo o novo exercício!
 
+CREATE TABLE tipo_curso 
+(
+	codigo_tipo_curso smallint unsigned not null auto_increment,
+    tipo varchar(45) not null,
+    PRIMARY KEY (codigo_tipo_curso)
+);
+CREATE INDEX cod_tip_curs ON tipo_curso (codigo_tipo_curso);
+CREATE INDEX tipo ON tipo_curso (tipo);
 
+CREATE TABLE instrutores 
+(
+	codigo_instrutor smallint unsigned not null auto_increment,
+    nome_instrutor varchar(45) not null, 
+    telefone_instrutor varchar(45) not null,
+    PRIMARY KEY (codigo_instrutor)
+);
+CREATE INDEX cod_instrut ON instrutores (codigo_instrutor);
+CREATE INDEX nom_instrut ON instrutores (nome_instrutor(5));
+
+CREATE TABLE cursos
+(
+	codigo_curso smallint unsigned not null auto_increment, 
+    nome_curso varchar(45) not null, 
+    codigo_tipo_curso smallint unsigned default null, 
+    codigo_instrutor smallint unsigned default null,
+    valor double unsigned not null, 
+    PRIMARY KEY (codigo_curso), 
+    CONSTRAINT FK_codigo_tipo_curso FOREIGN KEY (codigo_tipo_curso) REFERENCES tipo_curso (codigo_tipo_curso),
+    CONSTRAINT FK_codigo_instrutor FOREIGN KEY (codigo_instrutor) REFERENCES instrutores (codigo_instrutor)
+);
+
+CREATE TABLE aluno
+(
+	codigo_aluno int unsigned not null auto_increment,
+    nome_aluno varchar(45) not null, 
+    endereco_aluno varchar(100) not null,
+    email_aluno varchar(100) not null,
+    PRIMARY KEY (codigo_aluno)
+);
+
+CREATE TABLE pedidos
+(
+	codigo_pedido int unsigned not null auto_increment,
+    codigo_aluno int unsigned not null, 
+    dia DATE not null,
+    hora TIME not null,
+    PRIMARY KEY (codigo_pedido),
+    CONSTRAINT FK_codigo_aluno FOREIGN KEY (codigo_aluno) REFERENCES aluno (codigo_aluno)
+);
+
+CREATE TABLE pedidos_detalhes
+(
+	codigo_pedido int unsigned not null,
+    codigo_curso  smallint unsigned not null, 
+    valor double unsigned not null,
+    CONSTRAINT FK_codigo_pedido FOREIGN KEY (codigo_pedido) REFERENCES pedidos (codigo_pedido),
+    CONSTRAINT FK_codigo_curso FOREIGN KEY (codigo_curso) REFERENCES cursos (codigo_curso)
+);
+
+ALTER TABLE aluno ADD data_nascimento varchar(10);
+ALTER TABLE aluno CHANGE COLUMN data_nascimento nascimento DATE;
+CREATE INDEX alunos ON aluno (nome_aluno);
+ALTER TABLE instrutores ADD email_instrutor varchar(100);
+CREATE INDEX cod_instutor ON cursos (codigo_instrutor);
+ALTER TABLE instrutores DROP COLUMN email_instrutor;
